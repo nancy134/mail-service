@@ -1,19 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
-const nodemailer = require("nodemailer");
-const aws = require("aws-sdk");
-
-const ses = new aws.SES({
-    apiVersion: "2010-12-01",
-    region: "us-east-1"
-});
-
-const transporter = nodemailer.createTransport({
-    SES: {ses, aws},
-});
-
+const mail = require('./mail');
+const jwt = require('./jwt');
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
@@ -26,28 +15,22 @@ app.get('/', (req, res) => {
     res.send("mail-service");
 });
 
-app.get('/sendmailtest', (req, res) => {
-transporter.sendMail(
-  {
-    from: "support@sabresw.com",
-    to: "nancy_piedra@yahoo.com",
-    subject: "Inquiry on 49 Bemis St, Weston, MA",
-    text: "Someone is asking question about your listing",
-    ses: {
-      // optional extra arguments for SendRawEmail
-      Tags: [
-        {
-          Name: "tag_name",
-          Value: "tag_value",
-        },
-      ],
-    },
-  },
-  (err, info) => {
-    console.log(info.envelope);
-    console.log(info.messageId);
-  }
-);
+app.post('/listing/inquiry/me', (req, res) => {
+    var authParmas = jwt.getAuthParams(req);
+    mail.sendListingInquiryMe(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+
+});
+
+app.post('/listing/inquiry', (req, res) => {
+    mail.sendListingInquiry(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
 });
 
 app.listen(PORT, HOST);
