@@ -15,8 +15,8 @@ function sendMail(body){
     return new Promise(function(resolve, reject){
          transporter.sendMail({
             from: "support@sabresw.com",
-            to: body.broker,
-            replyTo: body.client,
+            to: body.broker.toLowerCase(),
+            replyTo: body.client.toLowerCase(),
             subject: body.subject,
             text: body.message,
             ses: {},
