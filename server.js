@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mail = require('./mail');
 const jwt = require('./jwt');
+const utilities = require('./utilities');
+
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
@@ -26,7 +28,22 @@ app.post('/listing/inquiry/me', (req, res) => {
 });
 
 app.post('/listing/inquiry', (req, res) => {
-    mail.sendListingInquiry(req.body).then(function(result){
+    var fromAddress = utilities.getFromAddress(req); 
+    if (fromAddress){
+        mail.sendListingInquiry(fromAddress, req.body).then(function(result){
+            res.send(result);
+        }).catch(function(err){
+            res.send(err);
+        });
+    } else {
+        res.send("error getting from address");
+    }
+});
+
+app.post('/associations/users/invite', (req, res) => {
+    var fromAddress = utilities.getFromAddress(req);
+    var authParams = jwt.getAuthParams(req);
+    mail.sendAssociationInvite(authParams, fromAddress, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         res.send(err);

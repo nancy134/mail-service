@@ -11,14 +11,22 @@ const transporter = nodemailer.createTransport({
     SES: {ses, aws},
 });
 
+
+// {
+//     from: "email address",
+//     to: "email address",
+//     replyTo: "email address",
+//     subject: "string",
+//     text: "string"
+// }
 function sendMail(body){
     return new Promise(function(resolve, reject){
          transporter.sendMail({
-            from: "support@sabresw.com",
-            to: body.broker.toLowerCase(),
-            replyTo: body.client.toLowerCase(),
+            from: body.from,
+            to: body.to,
+            replyTo: body.replyTo,
             subject: body.subject,
-            text: body.message,
+            text: body.text,
             ses: {},
         },
         (err, info) => {
@@ -47,10 +55,38 @@ exports.sendListingInquiryMe = function(authParams, body){
     });
 }
 
-exports.sendListingInquiry = function(body){
+exports.sendListingInquiry = function(fromAddress, body){
     return new Promise(function(resolve, reject){
-        sendMail(body).then(function(result){
+        var sendBody = {
+            from: fromAddress,
+            to: body.broker.toLowerCase(),
+            replyTo: body.client.toLowerCase(),
+            subject: body.subject,
+            text: body.message
+        };
+        sendMail(sendBody).then(function(result){
             resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.sendAssociationInvite = function(authParams, fromAddress, body){
+    return new Promise(function(resolve, reject){
+        var sendBody = {
+            from: fromAddress,
+            to: body.associateEmail.toLowerCase(),
+            replyTo: body.userEmail.toLowerCase(),
+            subject: body.subject,
+            text: body.message
+        };
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            sendMail(sendBody).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
         }).catch(function(err){
             reject(err);
         });
