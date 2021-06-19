@@ -26,7 +26,7 @@ function sendMail(body){
             to: body.to,
             replyTo: body.replyTo,
             subject: body.subject,
-            text: body.text,
+            html: body.text,
             ses: {},
         },
         (err, info) => {
