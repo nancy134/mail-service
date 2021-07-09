@@ -6,8 +6,18 @@ exports.getFromAddress = function(req){
     if (parts.length > 2){
         domain = parts[1]+"."+parts[2]; 
     }
+
+    var name = "";
+    if (domain === "sabresw.com"){
+        name = "SabreSW";
+    } else if (domain === "phowma.com"){
+        name = "Phowma";
+    } else if (domain === "findingcre.com"){
+        name = "FindingCRE";
+    }
+
     if (domain){
-        fromAddress = "support@" + domain;
+        fromAddress = name+" <support@" + domain + ">";
     }
     return fromAddress;
 }
