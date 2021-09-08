@@ -93,3 +93,24 @@ exports.sendAssociationInvite = function(authParams, fromAddress, body){
     });
 }
 
+exports.sendListing = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        var url = "https://ph-mail-template.s3.amazonaws.com/listing.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(html){
+            var sendData = {
+                from: body.from,
+                to: body.to,
+                replyTo: body.replyTo,
+                subject: body.subject,
+                text: html.data
+            };
+            resolve(sendData);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
