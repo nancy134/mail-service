@@ -106,7 +106,9 @@ exports.sendListing = function(authParams, body){
             var listingData = {
                 address: "49 Broad St, Waltham, MA 02453"
             };
-            var finalHtml = mustache.render(html.data, listingData);
+
+            var finalHtml = mustache.render(html.data, body.listing);
+
             var sendData = {
                 from: body.from,
                 to: body.to,
