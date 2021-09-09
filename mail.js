@@ -1,6 +1,8 @@
 const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
 const jwt = require("./jwt");
+const mustache = require('mustache');
+const axios = require("axios")
 
 const ses = new aws.SES({
     apiVersion: "2010-12-01",
@@ -101,15 +103,25 @@ exports.sendListing = function(authParams, body){
             method: 'GET'
         };
         axios(options).then(function(html){
+            var listingData = {
+                address: "49 Broad St, Waltham, MA 02453"
+            };
+            var finalHtml = mustache.render(html.data, listingData);
             var sendData = {
                 from: body.from,
                 to: body.to,
                 replyTo: body.replyTo,
                 subject: body.subject,
-                text: html.data
+                text: finalHtml
             };
-            resolve(sendData);
+            sendMail(sendData).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                console.log(err)                
+                reject(err);
+            });
         }).catch(function(err){
+            
             reject(err);
         });
     });

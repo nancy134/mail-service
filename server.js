@@ -55,6 +55,7 @@ app.post('/sendListing', (req, res) => {
     mail.sendListing(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
+        console.log(err)
         res.send(err);
     });
 });
