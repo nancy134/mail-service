@@ -103,9 +103,39 @@ exports.sendListing = function(authParams, body){
             method: 'GET'
         };
         axios(options).then(function(html){
-            var listingData = {
-                address: "49 Broad St, Waltham, MA 02453"
+
+
+            var finalHtml = mustache.render(html.data, body.listing);
+
+            var sendData = {
+                from: body.from,
+                to: body.to,
+                replyTo: body.replyTo,
+                subject: body.subject,
+                text: finalHtml
             };
+            sendMail(sendData).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                console.log(err)                
+                reject(err);
+            });
+        }).catch(function(err){
+            
+            reject(err);
+        });
+    });
+}
+
+exports.sendListings = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        var url = "https://ph-mail-template.s3.amazonaws.com/listing.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(html){
+
 
             var finalHtml = mustache.render(html.data, body.listing);
 
