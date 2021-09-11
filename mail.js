@@ -1,6 +1,8 @@
 const nodemailer = require("nodemailer");
 const aws = require("aws-sdk");
 const jwt = require("./jwt");
+const mustache = require('mustache');
+const axios = require("axios")
 
 const ses = new aws.SES({
     apiVersion: "2010-12-01",
@@ -93,3 +95,91 @@ exports.sendAssociationInvite = function(authParams, fromAddress, body){
     });
 }
 
+exports.sendListing = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        var url = "https://ph-mail-template.s3.amazonaws.com/listing.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(html){
+
+
+            var finalHtml = mustache.render(html.data, body.listing);
+
+            var sendData = {
+                from: body.from,
+                to: body.to,
+                replyTo: body.replyTo,
+                subject: body.subject,
+                text: finalHtml
+            };
+            sendMail(sendData).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                console.log(err)                
+                reject(err);
+            });
+        }).catch(function(err){
+            
+            reject(err);
+        });
+    });
+}
+
+exports.sendListings = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        exports.getListingsTemplates().then(function(templates){
+
+            var finalHtml = templates.header + templates.listing + templates.footer;
+
+            var sendData = {
+                from: body.from,
+                to: body.to,
+                replyTo: body.replyTo,
+                subject: body.subject,
+                text: finalHtml
+            };
+            sendMail(sendData).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                console.log(err)                
+                reject(err);
+            });
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.getListingsTemplates = function(){
+    return new Promise(function(resolve, reject){
+        var urlHeader = "https://ph-mail-template.s3.amazonaws.com/header.html";
+        var urlSingleListing = "https://ph-mail-template.s3.amazonaws.com/singleListing.html";
+        var urlFooter = "https://ph-mail-template.s3.amazonaws.com/footer.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(header){
+            options.url = urlSingleListing;
+            axios(options).then(function(singleListing){
+                options.url = urlFooter;
+                axios(options).then(function(footer){
+                    var templates = {
+                        header: header,
+                        listing: singleListing,
+                        footer: footer
+                    };
+                    resolve(templates);
+                }).catch(function(err){
+                    reject(err);
+                });
+            }).catch(function(err){
+                reject(err);
+            });
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}

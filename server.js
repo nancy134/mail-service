@@ -50,4 +50,23 @@ app.post('/associations/users/invite', (req, res) => {
     });
 });
 
+app.post('/sendListing', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    mail.sendListing(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err)
+        res.send(err);
+    });
+});
+
+app.post('/sendListings', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    mail.sendListing(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err)
+        res.send(err);
+    });
+});
 app.listen(PORT, HOST);
