@@ -13,6 +13,13 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(cors());
 
+function errorResponse(res, err){
+    if (err.statusCode){
+        res.status(err.statusCode).send(err);
+    } else {
+        res.status(400).send(err);
+    }
+}
 app.get('/', (req, res) => {
     res.send("mail-service");
 });
@@ -52,11 +59,11 @@ app.post('/associations/users/invite', (req, res) => {
 
 app.post('/sendListing', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    mail.sendListing(authParams, req.body).then(function(result){
+    var fromAddress = utilities.getFromAddress(req);
+    mail.sendListing(authParams, fromAddress, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err)
-        res.send(err);
+        errorResponse(res, err);
     });
 });
 
@@ -65,8 +72,7 @@ app.post('/sendListings', (req, res) => {
     mail.sendListing(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err)
-        res.send(err);
+        errorResponse(res, err);
     });
 });
 app.listen(PORT, HOST);

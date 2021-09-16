@@ -13,6 +13,15 @@ const transporter = nodemailer.createTransport({
     SES: {ses, aws},
 });
 
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const { 
+  v1: uuidv1,
+  v4: uuidv4,
+} = require('uuid');
 
 // {
 //     from: "email address",
@@ -94,8 +103,29 @@ exports.sendAssociationInvite = function(authParams, fromAddress, body){
         });
     });
 }
+exports.uploadListing = function(html){
+    return new Promise(function(resolve, reject){
+        var uuid = uuidv1();
+        var key = "mailPreview/" + uuid + ".html";
+       
+        var params = {
+            Bucket: process.env.S3_BUCKET,
+            Key: key,
+            Body: html,
+            ContentType: "text/html"
+        };
+        s3.upload(params, function(s3Err, s3Data){
+            if (s3Err){
+                reject(s3Err);
+            } else {
+                resolve(s3Data);
+            }
+        });
+    });
+}
 
-exports.sendListing = function(authParams, body){
+
+exports.sendListing = function(authParams, fromAddress, body){
     return new Promise(function(resolve, reject){
         var url = "https://ph-mail-template.s3.amazonaws.com/listing.html";
         var options = {
@@ -106,20 +136,27 @@ exports.sendListing = function(authParams, body){
 
 
             var finalHtml = mustache.render(html.data, body.listing);
-
-            var sendData = {
-                from: body.from,
-                to: body.to,
-                replyTo: body.replyTo,
-                subject: body.subject,
-                text: finalHtml
-            };
-            sendMail(sendData).then(function(result){
-                resolve(result);
-            }).catch(function(err){
-                console.log(err)                
-                reject(err);
-            });
+            if (!body.preview){ 
+                var sendData = {
+                    from: fromAddress,
+                    to: body.to,
+                    replyTo: body.replyTo,
+                    subject: body.subject,
+                    text: finalHtml
+                };
+                sendMail(sendData).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+              
+                exports.uploadListing(finalHtml).then(function(link){
+                    resolve(link);
+                }).catch(function(err){
+                    reject(err);
+                });
+            }
         }).catch(function(err){
             
             reject(err);
@@ -143,7 +180,6 @@ exports.sendListings = function(authParams, body){
             sendMail(sendData).then(function(result){
                 resolve(result);
             }).catch(function(err){
-                console.log(err)                
                 reject(err);
             });
         }).catch(function(err){
