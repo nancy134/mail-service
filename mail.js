@@ -168,7 +168,10 @@ exports.sendListings = function(authParams, body){
     return new Promise(function(resolve, reject){
         exports.getListingsTemplates().then(function(templates){
 
-            var finalHtml = templates.header + templates.listing + templates.footer;
+            var finalHeader = mustache.render(templates.data.header, body);
+            var finalListing = mustache.render(templates.data.listing, body.listings[0]);
+            
+            var finalHtml = finalHeader + finalListing + templates.data.footer;
 
             var sendData = {
                 from: body.from,
@@ -180,6 +183,7 @@ exports.sendListings = function(authParams, body){
             sendMail(sendData).then(function(result){
                 resolve(result);
             }).catch(function(err){
+                console.log(err)                
                 reject(err);
             });
         }).catch(function(err){
