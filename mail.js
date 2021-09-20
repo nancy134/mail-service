@@ -167,11 +167,11 @@ exports.sendListing = function(authParams, fromAddress, body){
 exports.sendListings = function(authParams, body){
     return new Promise(function(resolve, reject){
         exports.getListingsTemplates().then(function(templates){
+        console.log(templates);
+            var finalHeader = mustache.render(templates.header, body);
+            var finalListing = mustache.render(templates.listing, body.listings[0]);
 
-            var finalHeader = mustache.render(templates.data.header, body);
-            var finalListing = mustache.render(templates.data.listing, body.listings[0]);
-            
-            var finalHtml = finalHeader + finalListing + templates.data.footer;
+            var finalHtml = finalHeader + finalListing + templates.footer;
 
             var sendData = {
                 from: body.from,
@@ -183,7 +183,7 @@ exports.sendListings = function(authParams, body){
             sendMail(sendData).then(function(result){
                 resolve(result);
             }).catch(function(err){
-                console.log(err)                
+                console.log(err)
                 reject(err);
             });
         }).catch(function(err){
@@ -198,7 +198,7 @@ exports.getListingsTemplates = function(){
         var urlSingleListing = "https://ph-mail-template.s3.amazonaws.com/singleListing.html";
         var urlFooter = "https://ph-mail-template.s3.amazonaws.com/footer.html";
         var options = {
-            url: url,
+            url: urlHeader,
             method: 'GET'
         };
         axios(options).then(function(header){
@@ -207,9 +207,9 @@ exports.getListingsTemplates = function(){
                 options.url = urlFooter;
                 axios(options).then(function(footer){
                     var templates = {
-                        header: header,
-                        listing: singleListing,
-                        footer: footer
+                        header: header.data,
+                        listing: singleListing.data,
+                        footer: footer.data
                     };
                     resolve(templates);
                 }).catch(function(err){
