@@ -167,7 +167,6 @@ exports.sendListing = function(authParams, fromAddress, body){
 exports.sendListings = function(authParams, body){
     return new Promise(function(resolve, reject){
         exports.getListingsTemplates().then(function(templates){
-        console.log(templates);
             var finalHeader = mustache.render(templates.header, body);
             var finalListing = mustache.render(templates.listing, body.listings[0]);
 
@@ -183,7 +182,6 @@ exports.sendListings = function(authParams, body){
             sendMail(sendData).then(function(result){
                 resolve(result);
             }).catch(function(err){
-                console.log(err)
                 reject(err);
             });
         }).catch(function(err){
