@@ -168,9 +168,15 @@ exports.sendListings = function(authParams, body){
     return new Promise(function(resolve, reject){
         exports.getListingsTemplates().then(function(templates){
             var finalHeader = mustache.render(templates.header, body);
-            var finalListing = mustache.render(templates.listing, body.listings[0]);
 
-            var finalHtml = finalHeader + finalListing + templates.footer;
+            var finalHtml = finalHeader;
+            var finalListing;
+            for (var i=0; i<body.listings.length; i++){
+                finalListing = mustache.render(templates.listing, body.listings[i]);
+                finalHtml = finalHtml + finalListing;
+            }
+
+            var finalHtml = finalHtml + templates.footer;
             if (!body.preview){
                 var sendData = {
                     from: body.from,
