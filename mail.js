@@ -171,19 +171,26 @@ exports.sendListings = function(authParams, body){
             var finalListing = mustache.render(templates.listing, body.listings[0]);
 
             var finalHtml = finalHeader + finalListing + templates.footer;
-
-            var sendData = {
-                from: body.from,
-                to: body.to,
-                replyTo: body.replyTo,
-                subject: body.subject,
-                text: finalHtml
-            };
-            sendMail(sendData).then(function(result){
-                resolve(result);
-            }).catch(function(err){
-                reject(err);
-            });
+            if (!body.preview){
+                var sendData = {
+                    from: body.from,
+                    to: body.to,
+                    replyTo: body.replyTo,
+                    subject: body.subject,
+                    text: finalHtml
+                };
+                sendMail(sendData).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                exports.uploadListing(finalHtml).then(function(link){
+                    resolve(link);
+                }).catch(function(err){
+                    reject(err);
+                });
+            }
         }).catch(function(err){
             reject(err);
         });
