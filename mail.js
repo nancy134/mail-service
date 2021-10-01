@@ -109,7 +109,7 @@ exports.uploadListing = function(html){
         var key = "mailPreview/" + uuid + ".html";
        
         var params = {
-            Bucket: process.env.S3_BUCKET,
+            Bucket: process.env.S3_BUCKET_MAIL_TEMPLATES,
             Key: key,
             Body: html,
             ContentType: "text/html"
@@ -152,6 +152,9 @@ exports.sendListing = function(authParams, fromAddress, body){
             } else {
               
                 exports.uploadListing(finalHtml).then(function(link){
+                    if (body.content){
+                        link.content = finalHtml;
+                    }
                     resolve(link);
                 }).catch(function(err){
                     reject(err);
