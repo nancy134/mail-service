@@ -68,9 +68,15 @@ exports.sendListingInquiryMe = function(authParams, body){
 
 exports.sendListingInquiry = function(fromAddress, body){
     return new Promise(function(resolve, reject){
+        var toField = "";
+        if (body.toEmail){
+            toField = body.toEmail;
+        } else if (body.broker){
+            toField = body.broker.toLowerCase();
+        }
         var sendBody = {
             from: fromAddress,
-            to: body.broker.toLowerCase(),
+            to: toField,
             replyTo: body.client.toLowerCase(),
             subject: body.subject,
             text: body.message
