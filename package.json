@@ -6,14 +6,14 @@
   "author": "Nancy Piedra <nancy_piedra@yahoo.com>",
   "main": "server.js",
   "dependencies": {
-    "aws-sdk": "^2.858.0",
+    "aws-sdk": "^2.1030.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "jwks-rsa": "^1.12.3",
+    "jwks-rsa": "^2.0.5",
     "mustache": "^4.2.0",
-    "nodemailer": "^6.5.0"
+    "nodemailer": "^6.7.1"
   },
   "devDependencies": {}
 }
