@@ -6,7 +6,7 @@
   "author": "Nancy Piedra <nancy_piedra@yahoo.com>",
   "main": "server.js",
   "dependencies": {
-    "aws-sdk": "^2.1030.0",
+    "aws-sdk": "^2.1031.0",
     "axios": "^0.24.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
