@@ -76,4 +76,16 @@ app.post('/sendListings', (req, res) => {
         errorResponse(res, err);
     });
 });
+
+app.post('/spark/emails', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    mail.sparkCreateEmail(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
+
 app.listen(PORT, HOST);

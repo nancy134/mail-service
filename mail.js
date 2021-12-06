@@ -243,3 +243,20 @@ exports.getListingsTemplates = function(){
         });
     });
 }
+
+exports.sparkCreateEmail = function(authParams, fromAddress, body){
+    return new Promise(function(resolve, reject){
+        var url = "https://ph-mail-template.s3.amazonaws.com/sparkListings.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(html){
+            var finalHtml = mustache.render(html.data, body);
+            resolve(finalHtml);
+        }).catch(function(err){
+
+            reject(err);
+        });
+    });
+}
