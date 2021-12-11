@@ -244,7 +244,7 @@ exports.getListingsTemplates = function(){
     });
 }
 
-exports.sparkCreateEmail = function(authParams, fromAddress, body){
+exports.sparkCreateEmail = function(fromAddress, body){
     return new Promise(function(resolve, reject){
         var url = "https://ph-mail-template.s3.amazonaws.com/sparkListings.html";
         var options = {
@@ -253,9 +253,14 @@ exports.sparkCreateEmail = function(authParams, fromAddress, body){
         };
         axios(options).then(function(html){
             var finalHtml = mustache.render(html.data, body);
-            resolve(finalHtml);
-        }).catch(function(err){
 
+                exports.uploadListing(finalHtml).then(function(link){
+                    resolve(link);
+                }).catch(function(err){
+                    reject(err);
+                });
+
+        }).catch(function(err){
             reject(err);
         });
     });
