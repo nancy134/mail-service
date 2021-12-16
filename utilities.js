@@ -21,3 +21,19 @@ exports.getFromAddress = function(req){
     }
     return fromAddress;
 }
+
+exports.convertFindingcreData = function(body){
+    var newBody = {}
+    var listings = [];
+    for (var i=0; i<body.listItems.rows.length; i++){
+        var listing = {};
+        var l = body.listItems.rows[i].listing.versions[0];
+        listing.p_address = l.address;
+        listing.p_city = l.city + ", " + l.state;
+        listing.p_name = l.shortDescription;
+        listings.push(listing);
+    }
+    newBody.listings = listings;
+    newBody.profile = {};
+    return(newBody);
+}

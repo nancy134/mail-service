@@ -3,6 +3,7 @@ const aws = require("aws-sdk");
 const jwt = require("./jwt");
 const mustache = require('mustache');
 const axios = require("axios")
+const utilities = require('./utilities');
 
 const ses = new aws.SES({
     apiVersion: "2010-12-01",
@@ -260,6 +261,28 @@ exports.sparkCreateEmail = function(fromAddress, body){
                     reject(err);
                 });
 
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.findingcreCreateEmail = function(fromAddress, body){
+    return new Promise(function(resolve, reject){
+        var url = "https://ph-mail-template.s3.amazonaws.com/findingcreListings.html";
+        var options = {
+            url: url,
+            method: 'GET'
+        };
+        axios(options).then(function(html){
+            var newBody = utilities.convertFindingcreData(body);
+            var finalHtml = mustache.render(html.data, newBody);
+
+            exports.uploadListing(finalHtml).then(function(link){
+                resolve(link);
+            }).catch(function(err){
+                reject(err);
+            });
         }).catch(function(err){
             reject(err);
         });

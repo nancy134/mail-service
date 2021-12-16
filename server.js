@@ -84,5 +84,14 @@ app.post('/spark/emails', (req, res) => {
     });
 });
 
+app.post('/findingcre/emails', (req, res) => {
+    mail.findingcreCreateEmail("nancy_piedra@yahoo.com", req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
 
 app.listen(PORT, HOST);
