@@ -22,29 +22,6 @@ exports.getFromAddress = function(req){
     return fromAddress;
 }
 
-exports.convertFindingcreData = function(body){
-    var newBody = {}
-    var listings = [];
-    for (var i=0; i<body.listItems.rows.length; i++){
-        var listing = {};
-        var l = body.listItems.rows[i].listing.versions[0];
-        listing.p_address = l.address;
-        listing.p_city = l.city + ", " + l.state;
-        listing.p_name = l.shortDescription;
-        if (l.images.length > 0){
-            listing.p_image = l.images[0].url
-        }
-        if (l.spaces.length > 0){
-            var sizeAndPrice = exports.formatSizeAndPrice(l.spaces);
-            listing.p_price = sizeAndPrize.price;
-        }
-        listings.push(listing);
-    }
-    newBody.listings = listings;
-    newBody.profile = {};
-    return(newBody);
-}
-
 
 exports.formatSizeAndPrice = function (spaces){
     var size = null;
@@ -110,3 +87,39 @@ exports.formatSizeAndPrice = function (spaces){
     }
     return ret;
 }
+
+
+function numberWithCommas(x){
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+exports.convertFindingcreData = function(body){
+    var newBody = {}
+    var listings = [];
+    for (var i=0; i<body.listItems.rows.length; i++){
+        var listing = {};
+        var l = body.listItems.rows[i].listing.versions[0];
+        listing.p_address = l.address;
+        listing.p_city = l.city + ", " + l.state;
+        listing.p_name = l.shortDescription;
+        if (l.images.length > 0){
+            listing.p_image = l.images[0].url
+        }
+        if (l.spaces.length > 0){
+            var sizeAndPrice = exports.formatSizeAndPrice(l.spaces);
+            listing.p_price = sizeAndPrice.price;
+        }
+        if (l.listingPrice){
+            var floatPrice = parseFloat(l.listingPrice);
+            var listingPrice = floatPrice.toLocaleString(undefined, {maximumFractionDigits:0});
+            listing.p_price = "For Sale at $"+listingPrice;
+        }
+        
+        listings.push(listing);
+    }
+    newBody.listings = listings;
+    newBody.profile = {};
+    return(newBody);
+}
+
