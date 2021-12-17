@@ -31,9 +31,13 @@ exports.convertFindingcreData = function(body){
         listing.p_address = l.address;
         listing.p_city = l.city + ", " + l.state;
         listing.p_name = l.shortDescription;
+        if (l.images.length > 0){
+            listing.p_image = l.images[0].url
+        }
         listings.push(listing);
     }
     newBody.listings = listings;
     newBody.profile = {};
     return(newBody);
 }
+
