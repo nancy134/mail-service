@@ -117,9 +117,21 @@ exports.convertFindingcreData = function(body){
         }
         
         listings.push(listing);
+        
     }
     newBody.listings = listings;
     newBody.profile = {};
+    newBody.profile =  {
+        name: "Paul Piedra",
+        company: "Sabre Realty Group",
+        disclaimer: "Information is deemed to be reliable, but is not guaranteed.",
+        email: "paulp@sabrerealtygroup.com",
+        phone: "781-354-7330",
+        website: "https://www.SabreRealtyGroup.com",
+        image: "https://ph-s3-images.s3.amazonaws.com/library/48315603-17a7-4daf-86f1-511fd69134d6/5243c0d3-2e95-4d1f-b083-3a8af7b5bb37/FindingCRELogo.png",
+        address: "Rapids Road, Stamford, MA"
+    }
+
     return(newBody);
 }
 
