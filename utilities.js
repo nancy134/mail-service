@@ -109,13 +109,15 @@ exports.convertFindingcreData = function(body){
         if (l.spaces.length > 0){
             var sizeAndPrice = exports.formatSizeAndPrice(l.spaces);
             listing.p_price = sizeAndPrice.price;
+            listing.p_spec = sizeAndPrice.size;
         }
         if (l.listingPrice){
             var floatPrice = parseFloat(l.listingPrice);
             var listingPrice = floatPrice.toLocaleString(undefined, {maximumFractionDigits:0});
             listing.p_price = "For Sale at $"+listingPrice;
         }
-        
+
+        listing.p_url = "https://local.phowma.com/listing/" + l.id;
         listings.push(listing);
         
     }
