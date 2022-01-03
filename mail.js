@@ -134,7 +134,10 @@ exports.uploadListing = function(html){
 
 exports.sendListing = function(authParams, fromAddress, body){
     return new Promise(function(resolve, reject){
-        var url = "https://ph-mail-template.s3.amazonaws.com/listing.html";
+        var url = 
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/listing.html";
         var options = {
             url: url,
             method: 'GET'
@@ -215,9 +218,18 @@ exports.sendListings = function(authParams, body){
 
 exports.getListingsTemplates = function(){
     return new Promise(function(resolve, reject){
-        var urlHeader = "https://ph-mail-template.s3.amazonaws.com/header.html";
-        var urlSingleListing = "https://ph-mail-template.s3.amazonaws.com/singleListing.html";
-        var urlFooter = "https://ph-mail-template.s3.amazonaws.com/footer.html";
+        var urlHeader =
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/header.html";
+        var urlSingleListing =
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/singleListing.html";
+        var urlFooter =
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/footer.html";
         var options = {
             url: urlHeader,
             method: 'GET'
@@ -247,7 +259,10 @@ exports.getListingsTemplates = function(){
 
 exports.sparkCreateEmail = function(fromAddress, body){
     return new Promise(function(resolve, reject){
-        var url = "https://ph-mail-template.s3.amazonaws.com/sparkListings.html";
+        var url =
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/sparkListings.html";
         var options = {
             url: url,
             method: 'GET'
@@ -256,6 +271,7 @@ exports.sparkCreateEmail = function(fromAddress, body){
             var finalHtml = mustache.render(html.data, body);
 
                 exports.uploadListing(finalHtml).then(function(link){
+                    link.content = finalHtml;
                     resolve(link);
                 }).catch(function(err){
                     reject(err);
@@ -269,7 +285,10 @@ exports.sparkCreateEmail = function(fromAddress, body){
 
 exports.findingcreCreateEmail = function(fromAddress, body){
     return new Promise(function(resolve, reject){
-        var url = "https://ph-mail-template.s3.amazonaws.com/findingcreListings.html";
+        var url =
+           "https://" +
+           process.env.S3_BUCKET_MAIL_TEMPLATES +
+           ".s3.amazonaws.com/findingcreListings.html";
         var options = {
             url: url,
             method: 'GET'
