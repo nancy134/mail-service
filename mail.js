@@ -137,7 +137,7 @@ exports.sendListing = function(authParams, fromAddress, body){
         var url = 
            "https://" +
            process.env.S3_BUCKET_MAIL_TEMPLATES +
-           ".s3.amazonaws.com/listing.html";
+           ".s3.amazonaws.com/listing-new2.html";
         var options = {
             url: url,
             method: 'GET'
@@ -146,6 +146,8 @@ exports.sendListing = function(authParams, fromAddress, body){
 
 
             var finalHtml = mustache.render(html.data, body.listing);
+            var finalHtml = finalHtml.replace(/#38761d/g, body.color);
+            var finalHtml = finalHtml.replace(/#d9ead3/g, body.colorLight);
             if (!body.preview){ 
                 var sendData = {
                     from: fromAddress,
@@ -163,7 +165,7 @@ exports.sendListing = function(authParams, fromAddress, body){
               
                 exports.uploadListing(finalHtml).then(function(link){
                     if (body.content){
-                        link.content = finalHtml;
+                        link.content= finalHtml;
                     }
                     resolve(link);
                 }).catch(function(err){
