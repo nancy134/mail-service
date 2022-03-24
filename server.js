@@ -59,7 +59,7 @@ app.post('/associations/users/invite', (req, res) => {
 
 app.post('/sendListing', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    var fromAddress = utilities.getFromAddress(req);
+    var fromAddress = utilities.getFromAddressContact(req, req.body.listing.contactName);
     mail.sendListing(authParams, fromAddress, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){

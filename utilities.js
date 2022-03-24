@@ -22,6 +22,19 @@ exports.getFromAddress = function(req){
     return fromAddress;
 }
 
+exports.getFromAddressContact = function(req, name){
+    var host = req.get('host')
+    var parts = host.split(".");
+    var fromAddress = null;
+    var domain = null;
+    if (parts.length > 2){
+        domain = parts[1]+"."+parts[2];
+    }
+    if (domain){
+        fromAddress = name+" <support@" + domain + ">";
+    }
+    return fromAddress;
+}
 
 exports.formatSizeAndPrice = function (spaces){
     var size = null;
