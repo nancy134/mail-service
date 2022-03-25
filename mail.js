@@ -148,15 +148,20 @@ exports.sendListing = function(authParams, fromAddress, body){
             var finalHtml = mustache.render(html.data, body.listing);
             var finalHtml = finalHtml.replace(/#38761d/g, body.color);
             var finalHtml = finalHtml.replace(/#d9ead3/g, body.colorLight);
-            if (!body.preview){ 
-                var sendData = {
-                    from: fromAddress,
-                    to: body.to,
-                    replyTo: body.replyTo,
-                    subject: body.subject,
-                    text: finalHtml
-                };
-                sendMail(sendData).then(function(result){
+            if (!body.preview){
+                var promises = [];
+                for (var i=0; i<body.contacts.length; i++){
+                    var sendData = {
+                        from: fromAddress,
+                        to: body.contacts[i].email,
+                        replyTo: body.replyTo,
+                        subject: body.subject,
+                        text: finalHtml
+                    }
+                    var sendPromise = sendMail(sendData);
+                    promises.push(sendPromise);
+                }
+                Promise.all(promises).then(function(result){
                     resolve(result);
                 }).catch(function(err){
                     reject(err);
