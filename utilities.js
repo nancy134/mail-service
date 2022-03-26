@@ -1,3 +1,14 @@
+exports.getDomain = function(req){
+    var host = req.get('host')
+    var parts = host.split(".");
+    var fromAddress = null;
+    var domain = null;
+    if (parts.length > 2){
+        domain = parts[1]+"."+parts[2];
+    }
+    return domain;
+}
+
 exports.getFromAddress = function(req){
     var host = req.get('host')
     var parts = host.split(".");
@@ -17,23 +28,43 @@ exports.getFromAddress = function(req){
     }
 
     if (domain){
-        fromAddress = name+" <support@" + domain + ">";
+        fromAddress = name + " <support@" + domain + ">";
     }
     return fromAddress;
 }
 
-exports.getFromAddressContact = function(req, name){
-    var host = req.get('host')
-    var parts = host.split(".");
-    var fromAddress = null;
-    var domain = null;
-    if (parts.length > 2){
-        domain = parts[1]+"."+parts[2];
+exports.getViaName = function(domain){
+
+    if (domain === "sabresw.com"){
+        name = "SabreSW";
+    } else if (domain === "phowma.com"){
+        name = "Phowma";
+    } else if (domain === "findingcre.com"){
+        name = "FindingCRE";
     }
+    return name;
+}
+
+exports.getFromAddressContact = function(req, name){
+    var domain = exports.getDomain(req);
+    var viaName = exports.getViaName(domain);
+        
     if (domain){
-        fromAddress = name+" <support@" + domain + ">";
+        fromAddress = name+ " via " + viaName + " <support@" + domain + ">";
     }
     return fromAddress;
+}
+
+exports.getUnsubscribeLink = function(domain, email){
+    var subDomain = "www";
+    if (domain === "phowma.com") subDomain = "local";
+    var url = 
+        "https://" +
+        subDomain + "." +
+        domain +
+        "?email=" +
+        email;
+    return(url); 
 }
 
 exports.formatSizeAndPrice = function (spaces){

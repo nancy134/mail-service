@@ -132,7 +132,7 @@ exports.uploadListing = function(html){
 }
 
 
-exports.sendListing = function(authParams, fromAddress, body){
+exports.sendListing = function(authParams, fromAddress, domain, body){
     return new Promise(function(resolve, reject){
         var url = 
            "https://" +
@@ -144,13 +144,17 @@ exports.sendListing = function(authParams, fromAddress, body){
         };
         axios(options).then(function(html){
 
+            var html = html.data;
+            html = html.replace(/#38761d/g, body.color);
+            html = html.replace(/#d9ead3/g, body.colorLight);
 
-            var finalHtml = mustache.render(html.data, body.listing);
-            var finalHtml = finalHtml.replace(/#38761d/g, body.color);
-            var finalHtml = finalHtml.replace(/#d9ead3/g, body.colorLight);
             if (!body.preview){
                 var promises = [];
                 for (var i=0; i<body.contacts.length; i++){
+                    var unsubscribe = utilities.getUnsubscribeLink(domain, body.contacts[i].email);
+                    body.listing.unsubscribe = unsubscribe;
+                    var finalHtml = mustache.render(html, body.listing);
+                    finalHtml = finalHtml.replace(/&#x2F;/g, '/');
                     var sendData = {
                         from: fromAddress,
                         to: body.contacts[i].email,
@@ -167,7 +171,8 @@ exports.sendListing = function(authParams, fromAddress, body){
                     reject(err);
                 });
             } else {
-              
+                var finalHtml = mustache.render(html, body.listing);
+                finalHtml = finalHtml.replace(/&#x2F;/g, '/');
                 exports.uploadListing(finalHtml).then(function(link){
                     if (body.content){
                         link.content= finalHtml;
