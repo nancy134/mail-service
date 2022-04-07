@@ -151,13 +151,13 @@ exports.sendListing = function(authParams, fromAddress, domain, body){
             if (!body.preview){
                 var promises = [];
                 for (var i=0; i<body.contacts.length; i++){
-                    var unsubscribe = utilities.getUnsubscribeLink(domain, body.contacts[i].email);
+                    var unsubscribe = utilities.getUnsubscribeLink(domain, body.contacts[i]);
                     body.listing.unsubscribe = unsubscribe;
                     var finalHtml = mustache.render(html, body.listing);
                     finalHtml = finalHtml.replace(/&#x2F;/g, '/');
                     var sendData = {
                         from: fromAddress,
-                        to: body.contacts[i].email,
+                        to: body.contacts[i],
                         replyTo: body.replyTo,
                         subject: body.subject,
                         text: finalHtml
