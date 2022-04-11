@@ -110,11 +110,14 @@ exports.sendAssociationInvite = function(authParams, fromAddress, body){
         });
     });
 }
+
+
 exports.uploadListing = function(html){
     return new Promise(function(resolve, reject){
         var uuid = uuidv1();
         var key = "mailPreview/" + uuid + ".html";
-       
+        var html = html.replace("[[trackingImage]]","");
+        
         var params = {
             Bucket: process.env.S3_BUCKET_MAIL_TEMPLATES,
             Key: key,
