@@ -321,3 +321,21 @@ exports.findingcreCreateEmail = function(fromAddress, body){
         });
     });
 }
+
+exports.contactUs = function(body){
+    var mailBody = {
+        from: body.to,
+        to: body.to,
+        replyTo: body.client,
+        subject: body.subject,
+        text: body.message 
+    };
+    return new Promise(function(resolve, reject){
+        sendMail(mailBody).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+

@@ -89,10 +89,18 @@ app.post('/findingcre/emails', (req, res) => {
     mail.findingcreCreateEmail("nancy_piedra@yahoo.com", req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err);
         errorResponse(res, err);
     });
 });
 
+app.post('/contactus', (req, res) => {
+   var domain = utilities.getDomain(req);
+   req.body.to = "support@" + domain;
+   mail.contactUs(req.body).then(function(result){
+       res.send(result);
+   }).catch(function(err){
+       errorResponse(res, err);
+   });
+});
 
 app.listen(PORT, HOST);
