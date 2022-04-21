@@ -62,7 +62,7 @@ exports.getUnsubscribeLink = function(domain, email){
         "https://" +
         subDomain + "." +
         domain +
-        "?email=" +
+        "/unsubscribe?email=" +
         email;
     return(url); 
 }
