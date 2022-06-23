@@ -4,13 +4,14 @@ const cors = require('cors');
 const mail = require('./mail');
 const jwt = require('./jwt');
 const utilities = require('./utilities');
+const google = require('./google');
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
 const app = express();
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: '10mb', extended:false}));
+app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors());
 
 function errorResponse(res, err){
@@ -103,4 +104,11 @@ app.post('/contactus', (req, res) => {
    });
 });
 
+app.post('/google/emails', (req, res) => {
+    google.sendMail(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
 app.listen(PORT, HOST);
