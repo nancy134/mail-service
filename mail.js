@@ -117,7 +117,12 @@ exports.uploadListing = function(html){
         var uuid = uuidv1();
         var key = "mailPreview/" + uuid + ".html";
         html = html.replace("[[trackingImage]]","");
-        
+        var url = 
+            "https://" +
+            process.env.S3_BUCKET_MAIL_TEMPLATES +
+            ".s3.amazonaws.com/" + 
+            key;
+        html = html.replace("[[url]]",url);
         var params = {
             Bucket: process.env.S3_BUCKET_MAIL_TEMPLATES,
             Key: key,
